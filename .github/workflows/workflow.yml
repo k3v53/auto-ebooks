@@ -25,7 +25,7 @@ jobs:
         run: echo Hello, world!
 
       - name: Install Calibre
-        run: apt install calibre -y
+        run: sudo apt-get install -y  calibre
 
       - name: Test Calibre
         run: calibre --version
