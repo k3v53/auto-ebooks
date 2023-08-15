@@ -32,8 +32,12 @@ async function listNotionBooks() {
 	}
 }
 async function main(params) {
-	let notionBooks = await listNotionBooks();
-	console.log(notionBooks);
+  let notionBooks = await listNotionBooks();
+	let notionBooksResults = notionBooks.results;
+	for (let book of notionBooksResults) {
+		console.log(book);
+	}
+	console.log('Books amount: ' + notionBooksResults.length);
 	const calibreResponse = await calibre.run(
 		'fetch-ebook-metadata -t "El alquimista"'
 	);

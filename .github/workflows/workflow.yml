@@ -45,12 +45,6 @@ jobs:
         uses: awalsh128/cache-apt-pkgs-action@latest
         with:
           packages: calibre
-
-      - name: Test Calibre
-        run: |
-          calibre --version &&
-          fetch-ebook-metadata -t "El alquimista" 
-      
             
       - name: Run the script
         run: node index.js
