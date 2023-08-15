@@ -7,6 +7,7 @@ on:
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
+  push:  
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -20,17 +21,39 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
 
-      # Runs a single command using the runners shell
-      - name: Run a one-line script
-        run: echo Hello, world!
+      - name: tmp files cache
+        uses: actions/cache@v3
+        with:
+          path: /tmp/**
+          key: ${{ runner.os }}-tmp-
+          restore-keys: |
+            ${{ runner.os }}-tmp-
 
+      - name: npm dependencies cache
+        uses: actions/cache@v2
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - name: Install dependencies
+        run: npm install -y .
+        
       - name: Install Calibre
-        run: sudo apt-get install -y  calibre
+        # run: sudo apt-get install -y  calibre
+        uses: awalsh128/cache-apt-pkgs-action@latest
+        with:
+          packages: calibre
 
       - name: Test Calibre
         run: |
           calibre --version &&
           fetch-ebook-metadata -t "El alquimista" 
-      # Runs a set of commands using the runners shell
+      
+            
       - name: Run the script
         run: node index.js
+        env:
+          NOTION_DATABASE_ID: ${{ secrets.NOTION_DATABASE_ID }}
+          NOTION_API_KEY: ${{ secrets.NOTION_API_KEY }}
